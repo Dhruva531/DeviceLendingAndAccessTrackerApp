@@ -29,6 +29,7 @@ public class GUIApp extends javax.swing.JFrame {
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(false);
         dashBoard.setVisible(true);
         LoginSBtn.addActionListener(e -> handleStaffLogin());
         LoginBBtn.addActionListener(e -> handleBorrowerLogin());
@@ -36,6 +37,15 @@ public class GUIApp extends javax.swing.JFrame {
         borrowerList = new SingleLinkedList();
         loanQueue = new Queue();
         lendDeviceSDBtn.addActionListener(e -> handleLendDevice());
+        logOutBDBtn.addActionListener(e -> {
+            dashBoard.setVisible(true);
+            staffLoginForm.setVisible(false);
+            borrowerLoginForm.setVisible(false);
+            staffDashBoard.setVisible(false);
+            borrowerDashboard.setVisible(false);
+            currentStaff = null;
+            currentBorrower = null;
+        });
     }
 
     /**
@@ -100,6 +110,18 @@ public class GUIApp extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         borrowersListSD = new javax.swing.JList<>();
         logoutSDBtn = new javax.swing.JButton();
+        borrowerDashboard = new javax.swing.JPanel();
+        titleBDLbl = new javax.swing.JLabel();
+        loansPanel = new javax.swing.JPanel();
+        loansBDLbl = new javax.swing.JLabel();
+        loansTableBS = new javax.swing.JScrollPane();
+        activeLoansBD = new javax.swing.JTable();
+        availableDevicePanel = new javax.swing.JPanel();
+        availableDeviceBDLbl = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        availableDeviceTableBD = new javax.swing.JTable();
+        requestDeviceBDBtn = new javax.swing.JButton();
+        logOutBDBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -292,7 +314,7 @@ public class GUIApp extends javax.swing.JFrame {
                 .addGroup(staffLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backSBtn)
                     .addComponent(LoginSBtn))
-                .addContainerGap(205, Short.MAX_VALUE))
+                .addContainerGap(219, Short.MAX_VALUE))
         );
 
         borrowerLoginForm.setBackground(new java.awt.Color(232, 244, 253));
@@ -607,8 +629,168 @@ public class GUIApp extends javax.swing.JFrame {
                 .addComponent(devicePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(activeLoansPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
                 .addComponent(borrowerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        borrowerDashboard.setBackground(new java.awt.Color(232, 244, 253));
+
+        titleBDLbl.setBackground(new java.awt.Color(31, 45, 61));
+        titleBDLbl.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        titleBDLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        titleBDLbl.setText("Borrower Dashboard");
+        titleBDLbl.setPreferredSize(new java.awt.Dimension(171, 30));
+
+        loansPanel.setBackground(new java.awt.Color(255, 255, 255));
+        loansPanel.setMinimumSize(new java.awt.Dimension(0, 0));
+
+        loansBDLbl.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        loansBDLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        loansBDLbl.setText("My Active Loans");
+
+        activeLoansBD.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Loan ID", "Device", "Start Date", "Due Date"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        loansTableBS.setViewportView(activeLoansBD);
+
+        javax.swing.GroupLayout loansPanelLayout = new javax.swing.GroupLayout(loansPanel);
+        loansPanel.setLayout(loansPanelLayout);
+        loansPanelLayout.setHorizontalGroup(
+            loansPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(loansPanelLayout.createSequentialGroup()
+                .addGap(19, 19, 19)
+                .addGroup(loansPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(loansTableBS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(loansBDLbl))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        loansPanelLayout.setVerticalGroup(
+            loansPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(loansPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(loansBDLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loansTableBS, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(23, Short.MAX_VALUE))
+        );
+
+        availableDevicePanel.setBackground(new java.awt.Color(255, 255, 255));
+        availableDevicePanel.setMinimumSize(new java.awt.Dimension(0, 0));
+
+        availableDeviceBDLbl.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        availableDeviceBDLbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        availableDeviceBDLbl.setText("Available Devices");
+
+        availableDeviceTableBD.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Device ID", "Device Type", "Status"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane4.setViewportView(availableDeviceTableBD);
+
+        javax.swing.GroupLayout availableDevicePanelLayout = new javax.swing.GroupLayout(availableDevicePanel);
+        availableDevicePanel.setLayout(availableDevicePanelLayout);
+        availableDevicePanelLayout.setHorizontalGroup(
+            availableDevicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(availableDevicePanelLayout.createSequentialGroup()
+                .addGroup(availableDevicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(availableDevicePanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(availableDeviceBDLbl))
+                    .addGroup(availableDevicePanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        availableDevicePanelLayout.setVerticalGroup(
+            availableDevicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(availableDevicePanelLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(availableDeviceBDLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
+
+        requestDeviceBDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        requestDeviceBDBtn.setText("Request Device");
+        requestDeviceBDBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                requestDeviceBDBtnActionPerformed(evt);
+            }
+        });
+
+        logOutBDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        logOutBDBtn.setText("Log Out");
+
+        javax.swing.GroupLayout borrowerDashboardLayout = new javax.swing.GroupLayout(borrowerDashboard);
+        borrowerDashboard.setLayout(borrowerDashboardLayout);
+        borrowerDashboardLayout.setHorizontalGroup(
+            borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                .addGroup(borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                        .addGap(139, 139, 139)
+                        .addComponent(titleBDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(logOutBDBtn))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, borrowerDashboardLayout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(availableDevicePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, borrowerDashboardLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(loansPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, borrowerDashboardLayout.createSequentialGroup()
+                        .addGap(200, 200, 200)
+                        .addComponent(requestDeviceBDBtn)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(24, Short.MAX_VALUE))
+        );
+        borrowerDashboardLayout.setVerticalGroup(
+            borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                .addGroup(borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(titleBDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logOutBDBtn))
+                .addGap(47, 47, 47)
+                .addComponent(loansPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(availableDevicePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addComponent(requestDeviceBDBtn)
+                .addGap(30, 30, 30))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -627,18 +809,22 @@ public class GUIApp extends javax.swing.JFrame {
                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(staffDashBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(borrowerDashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(dashBoard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(staffLoginForm, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE))
+                .addComponent(staffLoginForm, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                    .addGap(0, 99, Short.MAX_VALUE)
+                    .addGap(0, 113, Short.MAX_VALUE)
                     .addComponent(borrowerLoginForm, javax.swing.GroupLayout.PREFERRED_SIZE, 443, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(staffDashBoard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(borrowerDashboard, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -680,6 +866,7 @@ private void handleStaffLogin() {
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(true);
+        borrowerDashboard.setVisible(false);
         
         // Refresh the borrowers JList when staff dashboard opens
         javax.swing.DefaultListModel<String> listModel = new javax.swing.DefaultListModel<>();
@@ -740,16 +927,45 @@ private void handleStaffLogin() {
         borrowersListSD.setModel(listModel);
         
         JOptionPane.showMessageDialog(this, "Welcome, " + name + " (Borrower).");
-        dashBoard.setVisible(true);
+        dashBoard.setVisible(false);
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(true);
+
+        // Populate "My Active Loans" table — show only loans belonging to this borrower
+        javax.swing.table.DefaultTableModel loansModel =
+            (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
+        loansModel.setRowCount(0);
+        Queue tempQueue = new Queue();
+        while (!loanQueue.isEmpty()) {
+            Loan loan = (Loan) loanQueue.dequeue();
+            if (loan.getBorrower().equals(name)) {
+                loansModel.addRow(new Object[]{ loan.getLoanId(), loan.getDevice(), loan.getStartDate(), loan.getDueDate() });
+            }
+            tempQueue.enqueue(loan);
+        }
+        while (!tempQueue.isEmpty()) {
+            loanQueue.enqueue(tempQueue.dequeue());
+        }
+
+        // Populate "Available Devices" table — show only devices with status "Available"
+        javax.swing.table.DefaultTableModel availModel =
+            (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
+        availModel.setRowCount(0);
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device d = (Device) deviceList.get(i);
+            if (d.getStatus().equals("Available")) {
+                availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
+            }
+        }
     }
     private void staffDRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_staffDRBActionPerformed
         dashBoard.setVisible(false);
         staffLoginForm.setVisible(true);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(false);
     }//GEN-LAST:event_staffDRBActionPerformed
 
     private void nameBTFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameBTFActionPerformed
@@ -761,6 +977,7 @@ private void handleStaffLogin() {
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(true);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(false);
     }//GEN-LAST:event_borrowerDRBActionPerformed
 
     private void backSBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backSBtnActionPerformed
@@ -768,6 +985,7 @@ private void handleStaffLogin() {
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(false);
     }//GEN-LAST:event_backSBtnActionPerformed
 
     private void backBBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBBtnActionPerformed
@@ -775,6 +993,7 @@ private void handleStaffLogin() {
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(false);
     }//GEN-LAST:event_backBBtnActionPerformed
 
     // This method runs when the "Add Device" button is clicked
@@ -830,10 +1049,106 @@ private void handleStaffLogin() {
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(false);
+        borrowerDashboard.setVisible(false);
         // Clear the logged-in user
         currentStaff = null;
         currentBorrower = null;
     }//GEN-LAST:event_logoutSDBtnActionPerformed
+
+    // This method runs when the "Request Device" button is clicked on the Borrower Dashboard
+    private void requestDeviceBDBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestDeviceBDBtnActionPerformed
+
+        // Step 1: Check if there are any devices at all
+        if (deviceList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No devices available.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Step 2: Ask the borrower to type the Device ID they want
+        String deviceId = JOptionPane.showInputDialog(this, "Enter the Device ID you want to request:");
+        if (deviceId == null || deviceId.trim().isEmpty()) {
+            return;
+        }
+        deviceId = deviceId.trim();
+
+        // Step 3: Search for the device in the list
+        Device foundDevice = null;
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device d = (Device) deviceList.get(i);
+            if (d.getDeviceId().equals(deviceId)) {
+                foundDevice = d;
+                break;
+            }
+        }
+
+        // Step 4: If device not found, show error
+        if (foundDevice == null) {
+            JOptionPane.showMessageDialog(this, "Device not found.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Step 5: If device is already loaned, show error
+        if (foundDevice.getStatus().equals("Loaned")) {
+            JOptionPane.showMessageDialog(this, "This device is already loaned out.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Step 6: Ask for start date
+        String startDate = JOptionPane.showInputDialog(this, "Enter Start Date (e.g. 05-03-2026):");
+        if (startDate == null || startDate.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Start Date is required.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        startDate = startDate.trim();
+
+        // Step 7: Ask for due date
+        String dueDate = JOptionPane.showInputDialog(this, "Enter Due Date (e.g. 20-03-2026):");
+        if (dueDate == null || dueDate.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Due Date is required.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        dueDate = dueDate.trim();
+
+        // Step 8: Update the device status to Loaned
+        foundDevice.setStatus("Loaned");
+        foundDevice.setNotes(currentBorrower.getName());
+
+        // Step 9: Create a loan ID and the Loan object, then add to queue
+        loanCounter = loanCounter + 1;
+        String loanId = "L" + loanCounter;
+        Loan loan = new Loan(loanId, currentBorrower.getName(), deviceId, startDate, dueDate, "Active");
+        loanQueue.enqueue(loan);
+
+        // Step 10: Refresh "My Active Loans" table
+        javax.swing.table.DefaultTableModel loansModel =
+            (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
+        loansModel.setRowCount(0);
+        Queue tempQueue = new Queue();
+        while (!loanQueue.isEmpty()) {
+            Loan l = (Loan) loanQueue.dequeue();
+            if (l.getBorrower().equals(currentBorrower.getName())) {
+                loansModel.addRow(new Object[]{ l.getLoanId(), l.getDevice(), l.getStartDate(), l.getDueDate() });
+            }
+            tempQueue.enqueue(l);
+        }
+        while (!tempQueue.isEmpty()) {
+            loanQueue.enqueue(tempQueue.dequeue());
+        }
+
+        // Step 11: Refresh "Available Devices" table
+        javax.swing.table.DefaultTableModel availModel =
+            (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
+        availModel.setRowCount(0);
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device d = (Device) deviceList.get(i);
+            if (d.getStatus().equals("Available")) {
+                availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
+            }
+        }
+
+        // Step 12: Show success message
+        JOptionPane.showMessageDialog(this, "Device " + deviceId + " requested successfully!");
+    }//GEN-LAST:event_requestDeviceBDBtnActionPerformed
 
     // This method runs when the "Lend Device" button is clicked
     private void handleLendDevice() {
@@ -986,12 +1301,17 @@ private void handleStaffLogin() {
     private javax.swing.JButton LoginBBtn;
     private javax.swing.JButton LoginSBtn;
     private javax.swing.JTable activeLoanTableSD;
+    private javax.swing.JTable activeLoansBD;
     private javax.swing.JPanel activeLoansPanel;
     private javax.swing.JLabel activeLoansSDLbl;
     private javax.swing.JButton addSDBtn;
+    private javax.swing.JLabel availableDeviceBDLbl;
+    private javax.swing.JPanel availableDevicePanel;
+    private javax.swing.JTable availableDeviceTableBD;
     private javax.swing.JButton backBBtn;
     private javax.swing.JButton backSBtn;
     private javax.swing.JRadioButton borrowerDRB;
+    private javax.swing.JPanel borrowerDashboard;
     private javax.swing.JPanel borrowerLoginForm;
     private javax.swing.JPanel borrowerPanel;
     private javax.swing.JList<String> borrowersListSD;
@@ -1010,7 +1330,12 @@ private void handleStaffLogin() {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton lendDeviceSDBtn;
+    private javax.swing.JLabel loansBDLbl;
+    private javax.swing.JPanel loansPanel;
+    private javax.swing.JScrollPane loansTableBS;
+    private javax.swing.JButton logOutBDBtn;
     private javax.swing.ButtonGroup loginRB;
     private javax.swing.JButton logoutSDBtn;
     private javax.swing.JLabel nameBLbl;
@@ -1021,6 +1346,7 @@ private void handleStaffLogin() {
     private javax.swing.JTextField phoneBTF;
     private javax.swing.JLabel phoneSLbl;
     private javax.swing.JTextField phoneSTF;
+    private javax.swing.JButton requestDeviceBDBtn;
     private javax.swing.JTextField roleSTF;
     private javax.swing.JLabel skillLevelBLbl;
     private javax.swing.JTextField skillLevelBTF;
@@ -1030,6 +1356,7 @@ private void handleStaffLogin() {
     private javax.swing.JTextField staffIdSTF;
     private javax.swing.JPanel staffLoginForm;
     private javax.swing.JLabel staffRoleSLbl;
+    private javax.swing.JLabel titleBDLbl;
     private javax.swing.JLabel titleBLbl;
     private javax.swing.JLabel titleDLbl;
     private javax.swing.JLabel titleSDLbl;
