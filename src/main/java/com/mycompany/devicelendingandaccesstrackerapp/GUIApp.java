@@ -81,6 +81,7 @@ public class GUIApp extends javax.swing.JFrame {
         discSLbl = new javax.swing.JLabel();
         backSBtn = new javax.swing.JButton();
         LoginSBtn = new javax.swing.JButton();
+        loginHistorySDBtn = new javax.swing.JButton();
         borrowerLoginForm = new javax.swing.JPanel();
         titleBLbl = new javax.swing.JLabel();
         userIdBLbl = new javax.swing.JLabel();
@@ -252,10 +253,24 @@ public class GUIApp extends javax.swing.JFrame {
         LoginSBtn.setForeground(new java.awt.Color(31, 45, 61));
         LoginSBtn.setText("Login");
 
+        loginHistorySDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        loginHistorySDBtn.setText("Login History");
+        loginHistorySDBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginHistorySDBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout staffLoginFormLayout = new javax.swing.GroupLayout(staffLoginForm);
         staffLoginForm.setLayout(staffLoginFormLayout);
         staffLoginFormLayout.setHorizontalGroup(
             staffLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(staffLoginFormLayout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addComponent(backSBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(LoginSBtn)
+                .addGap(103, 103, 103))
             .addGroup(staffLoginFormLayout.createSequentialGroup()
                 .addGroup(staffLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(staffLoginFormLayout.createSequentialGroup()
@@ -278,14 +293,11 @@ public class GUIApp extends javax.swing.JFrame {
                         .addComponent(titleSLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(staffLoginFormLayout.createSequentialGroup()
                         .addGap(118, 118, 118)
-                        .addComponent(discSLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(discSLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(staffLoginFormLayout.createSequentialGroup()
+                        .addGap(166, 166, 166)
+                        .addComponent(loginHistorySDBtn)))
                 .addContainerGap(112, Short.MAX_VALUE))
-            .addGroup(staffLoginFormLayout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(backSBtn)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(LoginSBtn)
-                .addGap(103, 103, 103))
         );
         staffLoginFormLayout.setVerticalGroup(
             staffLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,7 +330,9 @@ public class GUIApp extends javax.swing.JFrame {
                 .addGroup(staffLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(backSBtn)
                     .addComponent(LoginSBtn))
-                .addContainerGap(219, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(loginHistorySDBtn)
+                .addContainerGap(184, Short.MAX_VALUE))
         );
 
         borrowerLoginForm.setBackground(new java.awt.Color(232, 244, 253));
@@ -1165,6 +1179,36 @@ private void handleStaffLogin() {
         JOptionPane.showMessageDialog(this, "Device " + deviceId + " requested successfully!");
     }//GEN-LAST:event_requestDeviceBDBtnActionPerformed
 
+    private void loginHistorySDBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginHistorySDBtnActionPerformed
+
+        // Check if anyone has logged in yet
+        if (loginHistory.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No login history yet.", "Login History", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        // Build a message string by going through the stack
+        // We use a temporary stack so we don't lose the original data
+        String history = "";
+        Stack tempStack = new Stack();
+
+        // Pop each entry from loginHistory and add to the message
+        while (!loginHistory.isEmpty()) {
+            String entry = (String) loginHistory.pop();
+            history = history + entry + "\n"; // add each login on a new line
+            tempStack.push(entry); // save it in temp so we can restore it
+        }
+
+        // Restore all entries back into loginHistory
+        while (!tempStack.isEmpty()) {
+            loginHistory.push(tempStack.pop());
+        }
+
+        // Show the login history in a popup dialog
+        JOptionPane.showMessageDialog(this, history, "Login History (most recent first)", JOptionPane.INFORMATION_MESSAGE);
+
+    }//GEN-LAST:event_loginHistorySDBtnActionPerformed
+
     // This method runs when the "Return Device" button is clicked on the Borrower Dashboard
     private void handleReturnDevice() {
 
@@ -1242,6 +1286,9 @@ private void handleStaffLogin() {
                 availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
             }
         }
+
+        // Also refresh the Staff Dashboard loan table so it stays up to date
+        refreshLoanTable();
 
         //  Show success message
         JOptionPane.showMessageDialog(this, "Device " + deviceId + " returned successfully!");
@@ -1433,6 +1480,7 @@ private void handleStaffLogin() {
     private javax.swing.JPanel loansPanel;
     private javax.swing.JScrollPane loansTableBS;
     private javax.swing.JButton logOutBDBtn;
+    private javax.swing.JButton loginHistorySDBtn;
     private javax.swing.ButtonGroup loginRB;
     private javax.swing.JButton logoutSDBtn;
     private javax.swing.JLabel nameBLbl;
