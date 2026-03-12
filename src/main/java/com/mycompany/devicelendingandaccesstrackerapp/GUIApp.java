@@ -18,6 +18,7 @@ public class GUIApp extends javax.swing.JFrame {
     private SingleLinkedList borrowerList;
     private Queue loanQueue;
     private int loanCounter = 0;
+    private Stack loginHistory; // Stack to keep track of who logged in (last login is on top)
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GUIApp.class.getName());
 
     /**
@@ -36,7 +37,9 @@ public class GUIApp extends javax.swing.JFrame {
         deviceList = new SingleLinkedList();
         borrowerList = new SingleLinkedList();
         loanQueue = new Queue();
+        loginHistory = new Stack(); // create the login history stack
         lendDeviceSDBtn.addActionListener(e -> handleLendDevice());
+        returnBDBtn.addActionListener(e -> handleReturnDevice());
         logOutBDBtn.addActionListener(e -> {
             dashBoard.setVisible(true);
             staffLoginForm.setVisible(false);
@@ -122,6 +125,7 @@ public class GUIApp extends javax.swing.JFrame {
         availableDeviceTableBD = new javax.swing.JTable();
         requestDeviceBDBtn = new javax.swing.JButton();
         logOutBDBtn = new javax.swing.JButton();
+        returnBDBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -753,27 +757,32 @@ public class GUIApp extends javax.swing.JFrame {
         logOutBDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         logOutBDBtn.setText("Log Out");
 
+        returnBDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        returnBDBtn.setText("Return Device");
+
         javax.swing.GroupLayout borrowerDashboardLayout = new javax.swing.GroupLayout(borrowerDashboard);
         borrowerDashboard.setLayout(borrowerDashboardLayout);
         borrowerDashboardLayout.setHorizontalGroup(
             borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(borrowerDashboardLayout.createSequentialGroup()
-                .addGroup(borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                .addGroup(borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, borrowerDashboardLayout.createSequentialGroup()
                         .addGap(139, 139, 139)
                         .addComponent(titleBDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(logOutBDBtn))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, borrowerDashboardLayout.createSequentialGroup()
+                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addComponent(availableDevicePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, borrowerDashboardLayout.createSequentialGroup()
+                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
                         .addGap(19, 19, 19)
                         .addComponent(loansPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, borrowerDashboardLayout.createSequentialGroup()
-                        .addGap(200, 200, 200)
+                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                        .addGap(27, 27, 27)
                         .addComponent(requestDeviceBDBtn)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(returnBDBtn)
+                        .addGap(28, 28, 28)))
                 .addContainerGap(24, Short.MAX_VALUE))
         );
         borrowerDashboardLayout.setVerticalGroup(
@@ -789,7 +798,9 @@ public class GUIApp extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(availableDevicePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
-                .addComponent(requestDeviceBDBtn)
+                .addGroup(borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(requestDeviceBDBtn)
+                    .addComponent(returnBDBtn))
                 .addGap(30, 30, 30))
         );
 
@@ -861,6 +872,8 @@ private void handleStaffLogin() {
         }
         currentStaff = new Staff(userId, name, email, phone, staffRole);
         currentBorrower = null;
+        // Push this login event to the login history stack
+        loginHistory.push(name + " (Staff) logged in");
         JOptionPane.showMessageDialog(this, "Welcome, " + name + " (Staff).");
         dashBoard.setVisible(false);
         staffLoginForm.setVisible(false);
@@ -926,6 +939,8 @@ private void handleStaffLogin() {
         }
         borrowersListSD.setModel(listModel);
         
+        // Push this login event to the login history stack
+        loginHistory.push(name + " (Borrower) logged in");
         JOptionPane.showMessageDialog(this, "Welcome, " + name + " (Borrower).");
         dashBoard.setVisible(false);
         staffLoginForm.setVisible(false);
@@ -1058,20 +1073,20 @@ private void handleStaffLogin() {
     // This method runs when the "Request Device" button is clicked on the Borrower Dashboard
     private void requestDeviceBDBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_requestDeviceBDBtnActionPerformed
 
-        // Step 1: Check if there are any devices at all
+        // Check if there are any devices at all
         if (deviceList.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No devices available.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Step 2: Ask the borrower to type the Device ID they want
+        //Ask the borrower to type the Device ID they want
         String deviceId = JOptionPane.showInputDialog(this, "Enter the Device ID you want to request:");
         if (deviceId == null || deviceId.trim().isEmpty()) {
             return;
         }
         deviceId = deviceId.trim();
 
-        // Step 3: Search for the device in the list
+        //  Search for the device in the list
         Device foundDevice = null;
         for (int i = 0; i < deviceList.size(); i++) {
             Device d = (Device) deviceList.get(i);
@@ -1081,19 +1096,19 @@ private void handleStaffLogin() {
             }
         }
 
-        // Step 4: If device not found, show error
+        //If device not found, show error
         if (foundDevice == null) {
             JOptionPane.showMessageDialog(this, "Device not found.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Step 5: If device is already loaned, show error
+        //  If device is already loaned, show error
         if (foundDevice.getStatus().equals("Loaned")) {
             JOptionPane.showMessageDialog(this, "This device is already loaned out.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Step 6: Ask for start date
+        //  Ask for start date
         String startDate = JOptionPane.showInputDialog(this, "Enter Start Date (e.g. 05-03-2026):");
         if (startDate == null || startDate.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Start Date is required.", "Validation", JOptionPane.WARNING_MESSAGE);
@@ -1101,7 +1116,7 @@ private void handleStaffLogin() {
         }
         startDate = startDate.trim();
 
-        // Step 7: Ask for due date
+        //  Ask for due date
         String dueDate = JOptionPane.showInputDialog(this, "Enter Due Date (e.g. 20-03-2026):");
         if (dueDate == null || dueDate.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Due Date is required.", "Validation", JOptionPane.WARNING_MESSAGE);
@@ -1109,17 +1124,17 @@ private void handleStaffLogin() {
         }
         dueDate = dueDate.trim();
 
-        // Step 8: Update the device status to Loaned
+        // Update the device status to Loaned
         foundDevice.setStatus("Loaned");
         foundDevice.setNotes(currentBorrower.getName());
 
-        // Step 9: Create a loan ID and the Loan object, then add to queue
+        //Create a loan ID and the Loan object, then add to queue
         loanCounter = loanCounter + 1;
         String loanId = "L" + loanCounter;
         Loan loan = new Loan(loanId, currentBorrower.getName(), deviceId, startDate, dueDate, "Active");
         loanQueue.enqueue(loan);
 
-        // Step 10: Refresh "My Active Loans" table
+        //  Refresh "My Active Loans" table
         javax.swing.table.DefaultTableModel loansModel =
             (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
         loansModel.setRowCount(0);
@@ -1135,7 +1150,7 @@ private void handleStaffLogin() {
             loanQueue.enqueue(tempQueue.dequeue());
         }
 
-        // Step 11: Refresh "Available Devices" table
+        // Refresh "Available Devices" table
         javax.swing.table.DefaultTableModel availModel =
             (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
         availModel.setRowCount(0);
@@ -1146,9 +1161,91 @@ private void handleStaffLogin() {
             }
         }
 
-        // Step 12: Show success message
+        //  Show success message
         JOptionPane.showMessageDialog(this, "Device " + deviceId + " requested successfully!");
     }//GEN-LAST:event_requestDeviceBDBtnActionPerformed
+
+    // This method runs when the "Return Device" button is clicked on the Borrower Dashboard
+    private void handleReturnDevice() {
+
+        //  Make sure the borrower is logged in
+        if (currentBorrower == null) {
+            JOptionPane.showMessageDialog(this, "No borrower logged in.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Ask the borrower which Device ID they want to return
+        String deviceId = JOptionPane.showInputDialog(this, "Enter the Device ID you want to return:");
+        if (deviceId == null || deviceId.trim().isEmpty()) {
+            return; // user clicked Cancel
+        }
+        deviceId = deviceId.trim();
+
+        //  Search the loan queue for a matching loan (same device + same borrower)
+        Loan foundLoan = null;
+        Queue tempQueue = new Queue();
+
+        while (!loanQueue.isEmpty()) {
+            Loan l = (Loan) loanQueue.dequeue();
+            // Check if this loan belongs to the current borrower and matches the device ID
+            if (l.getDevice().equals(deviceId) && l.getBorrower().equals(currentBorrower.getName())) {
+                foundLoan = l; // found the loan
+            } else {
+                tempQueue.enqueue(l); // keep all other loans
+            }
+        }
+
+        // Put all the kept loans back into the main queue
+        while (!tempQueue.isEmpty()) {
+            loanQueue.enqueue(tempQueue.dequeue());
+        }
+
+        // If no matching loan was found, show error
+        if (foundLoan == null) {
+            JOptionPane.showMessageDialog(this, "No active loan found for Device ID: " + deviceId, "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        //  Find the device in the device list and set it back to "Available"
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device d = (Device) deviceList.get(i);
+            if (d.getDeviceId().equals(deviceId)) {
+                d.setStatus("Available"); // mark device as available again
+                d.setNotes("");           // clear the borrower name from notes
+                break;
+            }
+        }
+
+        // Refresh "My Active Loans" table
+        javax.swing.table.DefaultTableModel loansModel =
+            (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
+        loansModel.setRowCount(0); // clear the table
+        Queue tempQueue2 = new Queue();
+        while (!loanQueue.isEmpty()) {
+            Loan l = (Loan) loanQueue.dequeue();
+            if (l.getBorrower().equals(currentBorrower.getName())) {
+                loansModel.addRow(new Object[]{ l.getLoanId(), l.getDevice(), l.getStartDate(), l.getDueDate() });
+            }
+            tempQueue2.enqueue(l);
+        }
+        while (!tempQueue2.isEmpty()) {
+            loanQueue.enqueue(tempQueue2.dequeue());
+        }
+
+        //  Refresh "Available Devices" table 
+        javax.swing.table.DefaultTableModel availModel =
+            (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
+        availModel.setRowCount(0); // clear the table
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device d = (Device) deviceList.get(i);
+            if (d.getStatus().equals("Available")) {
+                availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
+            }
+        }
+
+        //  Show success message
+        JOptionPane.showMessageDialog(this, "Device " + deviceId + " returned successfully!");
+    }
 
     // This method runs when the "Lend Device" button is clicked
     private void handleLendDevice() {
@@ -1205,7 +1302,7 @@ private void handleStaffLogin() {
         }
         startDate = startDate.trim();
 
-        // : Ask for the due date (when device should be returned)
+        //  Ask for the due date (when device should be returned)
         String dueDate = JOptionPane.showInputDialog(this, "Enter Due Date (e.g. 20-03-2026):");
         if (dueDate == null || dueDate.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Due Date is required.", "Validation", JOptionPane.WARNING_MESSAGE);
@@ -1347,6 +1444,7 @@ private void handleStaffLogin() {
     private javax.swing.JLabel phoneSLbl;
     private javax.swing.JTextField phoneSTF;
     private javax.swing.JButton requestDeviceBDBtn;
+    private javax.swing.JButton returnBDBtn;
     private javax.swing.JTextField roleSTF;
     private javax.swing.JLabel skillLevelBLbl;
     private javax.swing.JTextField skillLevelBTF;
