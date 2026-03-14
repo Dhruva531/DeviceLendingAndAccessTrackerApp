@@ -49,6 +49,8 @@ public class GUIApp extends javax.swing.JFrame {
             currentStaff = null;
             currentBorrower = null;
         });
+        deleteSDBtn.addActionListener(e -> handleDeleteDevice());
+
     }
 
     /**
@@ -104,6 +106,7 @@ public class GUIApp extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         deviceTableSD = new javax.swing.JTable();
         addSDBtn = new javax.swing.JButton();
+        deleteSDBtn = new javax.swing.JButton();
         activeLoansPanel = new javax.swing.JPanel();
         activeLoansSDLbl = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -493,6 +496,9 @@ public class GUIApp extends javax.swing.JFrame {
             }
         });
 
+        deleteSDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        deleteSDBtn.setText("Delete Device");
+
         javax.swing.GroupLayout devicePanelLayout = new javax.swing.GroupLayout(devicePanel);
         devicePanel.setLayout(devicePanelLayout);
         devicePanelLayout.setHorizontalGroup(
@@ -503,15 +509,16 @@ public class GUIApp extends javax.swing.JFrame {
                         .addContainerGap(16, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(devicePanelLayout.createSequentialGroup()
-                        .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(devicePanelLayout.createSequentialGroup()
-                                .addGap(44, 44, 44)
-                                .addComponent(devicesSDLbl))
-                            .addGroup(devicePanelLayout.createSequentialGroup()
-                                .addGap(175, 175, 175)
-                                .addComponent(addSDBtn)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(44, 44, 44)
+                        .addComponent(devicesSDLbl)
+                        .addGap(0, 386, Short.MAX_VALUE)))
                 .addContainerGap())
+            .addGroup(devicePanelLayout.createSequentialGroup()
+                .addGap(71, 71, 71)
+                .addComponent(addSDBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deleteSDBtn)
+                .addGap(99, 99, 99))
         );
         devicePanelLayout.setVerticalGroup(
             devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -521,7 +528,9 @@ public class GUIApp extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addSDBtn)
+                .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addSDBtn)
+                    .addComponent(deleteSDBtn))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -894,7 +903,7 @@ private void handleStaffLogin() {
         borrowerLoginForm.setVisible(false);
         staffDashBoard.setVisible(true);
         borrowerDashboard.setVisible(false);
-        
+
         // Refresh the borrowers JList when staff dashboard opens
         javax.swing.DefaultListModel<String> listModel = new javax.swing.DefaultListModel<>();
         for (int i = 0; i < borrowerList.size(); i++) {
@@ -902,6 +911,13 @@ private void handleStaffLogin() {
             listModel.addElement(b.getName());
         }
         borrowersListSD.setModel(listModel);
+
+        // Clear all fields after successful login
+        staffIdSTF.setText("");
+        nameSTF.setText("");
+        emailSTF.setText("");
+        phoneSTF.setText("");
+        roleSTF.setText("");
     }
 
     private void handleBorrowerLogin() {
@@ -944,7 +960,7 @@ private void handleStaffLogin() {
         currentBorrower = new Borrower(userId, name, email, phone, skillLevel, maxActiveLoan);
         currentStaff = null;
         borrowerList.add(currentBorrower);
-        
+
         // Refresh the borrowers JList so staff can see all borrowers
         javax.swing.DefaultListModel<String> listModel = new javax.swing.DefaultListModel<>();
         for (int i = 0; i < borrowerList.size(); i++) {
@@ -952,7 +968,7 @@ private void handleStaffLogin() {
             listModel.addElement(b.getName());
         }
         borrowersListSD.setModel(listModel);
-        
+
         // Push this login event to the login history stack
         loginHistory.push(name + " (Borrower) logged in");
         JOptionPane.showMessageDialog(this, "Welcome, " + name + " (Borrower).");
@@ -963,14 +979,14 @@ private void handleStaffLogin() {
         borrowerDashboard.setVisible(true);
 
         // Populate "My Active Loans" table — show only loans belonging to this borrower
-        javax.swing.table.DefaultTableModel loansModel =
-            (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
+        javax.swing.table.DefaultTableModel loansModel
+                = (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
         loansModel.setRowCount(0);
         Queue tempQueue = new Queue();
         while (!loanQueue.isEmpty()) {
             Loan loan = (Loan) loanQueue.dequeue();
             if (loan.getBorrower().equals(name)) {
-                loansModel.addRow(new Object[]{ loan.getLoanId(), loan.getDevice(), loan.getStartDate(), loan.getDueDate() });
+                loansModel.addRow(new Object[]{loan.getLoanId(), loan.getDevice(), loan.getStartDate(), loan.getDueDate()});
             }
             tempQueue.enqueue(loan);
         }
@@ -979,15 +995,22 @@ private void handleStaffLogin() {
         }
 
         // Populate "Available Devices" table — show only devices with status "Available"
-        javax.swing.table.DefaultTableModel availModel =
-            (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
+        javax.swing.table.DefaultTableModel availModel
+                = (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
         availModel.setRowCount(0);
         for (int i = 0; i < deviceList.size(); i++) {
             Device d = (Device) deviceList.get(i);
             if (d.getStatus().equals("Available")) {
-                availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
+                availModel.addRow(new Object[]{d.getDeviceId(), d.getType(), d.getStatus()});
             }
         }
+
+        // Clear all fields after successful login
+        userIdBTF.setText("");
+        nameBTF.setText("");
+        emailBTF.setText("");
+        phoneBTF.setText("");
+        skillLevelBTF.setText("");
     }
     private void staffDRBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_staffDRBActionPerformed
         dashBoard.setVisible(false);
@@ -1070,6 +1093,57 @@ private void handleStaffLogin() {
             model.addRow(new Object[]{d.getDeviceId(), d.getType(), d.getStatus(), d.getNotes()});
         }
     }//GEN-LAST:event_addSDBtnActionPerformed
+    private void handleDeleteDevice() {
+
+       //Check if there are any devices
+        if (deviceList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No devices to delete.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        //  Ask for the Device ID to delete
+        String deviceId = JOptionPane.showInputDialog(this, "Enter the Device ID to delete:");
+        if (deviceId == null || deviceId.trim().isEmpty()) {
+            return;
+        }
+        deviceId = deviceId.trim();
+
+        //  Find the device and its index in the list
+        int foundIndex = -1;
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device d = (Device) deviceList.get(i);
+            if (d.getDeviceId().equals(deviceId)) {
+                foundIndex = i;
+                break;
+            }
+        }
+
+        //  If not found, show error
+        if (foundIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Device not found.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        //  Check if device is currently loaned — don't delete if on loan
+        Device d = (Device) deviceList.get(foundIndex);
+        if (d.getStatus().equals("Loaned")) {
+            JOptionPane.showMessageDialog(this, "Cannot delete. Device is currently on loan.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        //  Delete from the SingleLinkedList 
+        deviceList.delete(foundIndex);
+
+        //  Refresh the devices table on Staff Dashboard
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) deviceTableSD.getModel();
+        model.setRowCount(0);
+        for (int i = 0; i < deviceList.size(); i++) {
+            Device dev = (Device) deviceList.get(i);
+            model.addRow(new Object[]{dev.getDeviceId(), dev.getType(), dev.getStatus(), dev.getNotes()});
+        }
+
+        JOptionPane.showMessageDialog(this, "Device " + deviceId + " deleted successfully!");
+    }
 
     // This method runs when the "Log Out" button is clicked on the Staff Dashboard
     private void logoutSDBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutSDBtnActionPerformed
@@ -1149,14 +1223,14 @@ private void handleStaffLogin() {
         loanQueue.enqueue(loan);
 
         //  Refresh "My Active Loans" table
-        javax.swing.table.DefaultTableModel loansModel =
-            (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
+        javax.swing.table.DefaultTableModel loansModel
+                = (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
         loansModel.setRowCount(0);
         Queue tempQueue = new Queue();
         while (!loanQueue.isEmpty()) {
             Loan l = (Loan) loanQueue.dequeue();
             if (l.getBorrower().equals(currentBorrower.getName())) {
-                loansModel.addRow(new Object[]{ l.getLoanId(), l.getDevice(), l.getStartDate(), l.getDueDate() });
+                loansModel.addRow(new Object[]{l.getLoanId(), l.getDevice(), l.getStartDate(), l.getDueDate()});
             }
             tempQueue.enqueue(l);
         }
@@ -1165,13 +1239,13 @@ private void handleStaffLogin() {
         }
 
         // Refresh "Available Devices" table
-        javax.swing.table.DefaultTableModel availModel =
-            (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
+        javax.swing.table.DefaultTableModel availModel
+                = (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
         availModel.setRowCount(0);
         for (int i = 0; i < deviceList.size(); i++) {
             Device d = (Device) deviceList.get(i);
             if (d.getStatus().equals("Available")) {
-                availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
+                availModel.addRow(new Object[]{d.getDeviceId(), d.getType(), d.getStatus()});
             }
         }
 
@@ -1187,7 +1261,6 @@ private void handleStaffLogin() {
             return;
         }
 
-        // Build a message string by going through the stack
         // We use a temporary stack so we don't lose the original data
         String history = "";
         Stack tempStack = new Stack();
@@ -1261,14 +1334,14 @@ private void handleStaffLogin() {
         }
 
         // Refresh "My Active Loans" table
-        javax.swing.table.DefaultTableModel loansModel =
-            (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
+        javax.swing.table.DefaultTableModel loansModel
+                = (javax.swing.table.DefaultTableModel) activeLoansBD.getModel();
         loansModel.setRowCount(0); // clear the table
         Queue tempQueue2 = new Queue();
         while (!loanQueue.isEmpty()) {
             Loan l = (Loan) loanQueue.dequeue();
             if (l.getBorrower().equals(currentBorrower.getName())) {
-                loansModel.addRow(new Object[]{ l.getLoanId(), l.getDevice(), l.getStartDate(), l.getDueDate() });
+                loansModel.addRow(new Object[]{l.getLoanId(), l.getDevice(), l.getStartDate(), l.getDueDate()});
             }
             tempQueue2.enqueue(l);
         }
@@ -1277,13 +1350,13 @@ private void handleStaffLogin() {
         }
 
         //  Refresh "Available Devices" table 
-        javax.swing.table.DefaultTableModel availModel =
-            (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
+        javax.swing.table.DefaultTableModel availModel
+                = (javax.swing.table.DefaultTableModel) availableDeviceTableBD.getModel();
         availModel.setRowCount(0); // clear the table
         for (int i = 0; i < deviceList.size(); i++) {
             Device d = (Device) deviceList.get(i);
             if (d.getStatus().equals("Available")) {
-                availModel.addRow(new Object[]{ d.getDeviceId(), d.getType(), d.getStatus() });
+                availModel.addRow(new Object[]{d.getDeviceId(), d.getType(), d.getStatus()});
             }
         }
 
@@ -1461,6 +1534,7 @@ private void handleStaffLogin() {
     private javax.swing.JList<String> borrowersListSD;
     private javax.swing.JLabel borrowersSDLbl;
     private javax.swing.JPanel dashBoard;
+    private javax.swing.JButton deleteSDBtn;
     private javax.swing.JPanel devicePanel;
     private javax.swing.JTable deviceTableSD;
     private javax.swing.JLabel devicesSDLbl;
