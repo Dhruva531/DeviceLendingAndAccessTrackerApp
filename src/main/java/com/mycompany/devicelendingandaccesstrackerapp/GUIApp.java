@@ -26,6 +26,11 @@ public class GUIApp extends javax.swing.JFrame {
      */
     public GUIApp() {
         initComponents();
+        // Match frame background to panel color so no grey space shows
+        getContentPane().setBackground(new java.awt.Color(232, 244, 253));
+        // Set content size so frame fits exactly — removes grey strip
+        getContentPane().setPreferredSize(new java.awt.Dimension(520, 556));
+        pack();
         // Show only role-selection at startup; hide all other panels
         staffLoginForm.setVisible(false);
         borrowerLoginForm.setVisible(false);
@@ -132,10 +137,11 @@ public class GUIApp extends javax.swing.JFrame {
         returnBDBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(232, 244, 253));
         setResizable(false);
 
         dashBoard.setBackground(new java.awt.Color(232, 244, 253));
-        dashBoard.setPreferredSize(new java.awt.Dimension(508, 344));
+        dashBoard.setPreferredSize(new java.awt.Dimension(520, 556));
 
         titleDLbl.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
         titleDLbl.setForeground(new java.awt.Color(31, 45, 61));
@@ -197,7 +203,7 @@ public class GUIApp extends javax.swing.JFrame {
                 .addComponent(discDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dashBoardLayout.createSequentialGroup()
-                .addContainerGap(92, Short.MAX_VALUE)
+                .addContainerGap(104, Short.MAX_VALUE)
                 .addComponent(titleDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(58, 58, 58))
         );
@@ -212,11 +218,11 @@ public class GUIApp extends javax.swing.JFrame {
                 .addGroup(dashBoardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(staffDRB, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(borrowerDRB, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(281, Short.MAX_VALUE))
         );
 
         staffLoginForm.setBackground(new java.awt.Color(232, 244, 253));
-        staffLoginForm.setPreferredSize(new java.awt.Dimension(508, 344));
+        staffLoginForm.setPreferredSize(new java.awt.Dimension(520, 556));
 
         titleSLbl.setBackground(new java.awt.Color(31, 45, 61));
         titleSLbl.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -300,7 +306,7 @@ public class GUIApp extends javax.swing.JFrame {
                     .addGroup(staffLoginFormLayout.createSequentialGroup()
                         .addGap(166, 166, 166)
                         .addComponent(loginHistorySDBtn)))
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addContainerGap(124, Short.MAX_VALUE))
         );
         staffLoginFormLayout.setVerticalGroup(
             staffLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,7 +345,7 @@ public class GUIApp extends javax.swing.JFrame {
         );
 
         borrowerLoginForm.setBackground(new java.awt.Color(232, 244, 253));
-        borrowerLoginForm.setPreferredSize(new java.awt.Dimension(508, 344));
+        borrowerLoginForm.setPreferredSize(new java.awt.Dimension(520, 556));
 
         titleBLbl.setBackground(new java.awt.Color(31, 45, 61));
         titleBLbl.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
@@ -417,7 +423,7 @@ public class GUIApp extends javax.swing.JFrame {
                                 .addComponent(emailBTF)
                                 .addComponent(phoneBTF, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
                                 .addComponent(skillLevelBTF)))))
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(122, Short.MAX_VALUE))
         );
         borrowerLoginFormLayout.setVerticalGroup(
             borrowerLoginFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -636,7 +642,7 @@ public class GUIApp extends javax.swing.JFrame {
                             .addGroup(staffDashBoardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(devicePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(activeLoansPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addGap(0, 20, Short.MAX_VALUE))
+                        .addGap(0, 32, Short.MAX_VALUE))
                     .addGroup(staffDashBoardLayout.createSequentialGroup()
                         .addGap(204, 204, 204)
                         .addComponent(titleSDLbl)
@@ -782,6 +788,11 @@ public class GUIApp extends javax.swing.JFrame {
 
         returnBDBtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         returnBDBtn.setText("Return Device");
+        returnBDBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                returnBDBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout borrowerDashboardLayout = new javax.swing.GroupLayout(borrowerDashboard);
         borrowerDashboard.setLayout(borrowerDashboardLayout);
@@ -806,15 +817,14 @@ public class GUIApp extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(returnBDBtn)
                         .addGap(28, 28, 28)))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         borrowerDashboardLayout.setVerticalGroup(
             borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(borrowerDashboardLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
                 .addGroup(borrowerDashboardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(borrowerDashboardLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(titleBDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(titleBDLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(logOutBDBtn))
                 .addGap(47, 47, 47)
                 .addComponent(loansPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -850,7 +860,7 @@ public class GUIApp extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(dashBoard, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(staffLoginForm, javax.swing.GroupLayout.DEFAULT_SIZE, 556, Short.MAX_VALUE))
+                .addComponent(staffLoginForm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                     .addGap(0, 113, Short.MAX_VALUE)
@@ -873,8 +883,36 @@ private void handleStaffLogin() {
             JOptionPane.showMessageDialog(this, "Staff ID is required.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        if (userId.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Staff ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < userId.length(); i++) {
+            char c = userId.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Staff ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Name is required.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean nameValid = true;
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!Character.isLetter(c) && c != ' ') {
+                nameValid = false;
+                break;
+            }
+        }
+        if (!nameValid) {
+            JOptionPane.showMessageDialog(this, "Name must contain only letters and spaces.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (email.isEmpty()) {
@@ -930,8 +968,36 @@ private void handleStaffLogin() {
             JOptionPane.showMessageDialog(this, "User ID is required.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        if (userId.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Borrower ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < userId.length(); i++) {
+            char c = userId.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Borrower ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Name is required.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean nameValid = true;
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (!Character.isLetter(c) && c != ' ') {
+                nameValid = false;
+                break;
+            }
+        }
+        if (!nameValid) {
+            JOptionPane.showMessageDialog(this, "Name must contain only letters and spaces.", "Validation", JOptionPane.WARNING_MESSAGE);
             return;
         }
         if (email.isEmpty()) {
@@ -1057,7 +1123,23 @@ private void handleStaffLogin() {
         // If user clicked Cancel (null) or left it empty, show a warning and stop
         if (deviceId == null || deviceId.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Device ID is required.", "Validation", JOptionPane.WARNING_MESSAGE);
-            return;  // stop here, don't continue
+            return;
+        }
+        if (deviceId.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Device ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < deviceId.length(); i++) {
+            char c = deviceId.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Device ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
         //  Ask for the type of device (e.g. Laptop, Tablet, Phone)
@@ -1095,7 +1177,7 @@ private void handleStaffLogin() {
     }//GEN-LAST:event_addSDBtnActionPerformed
     private void handleDeleteDevice() {
 
-       //Check if there are any devices
+        //Check if there are any devices
         if (deviceList.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No devices to delete.", "Error", JOptionPane.WARNING_MESSAGE);
             return;
@@ -1107,6 +1189,22 @@ private void handleStaffLogin() {
             return;
         }
         deviceId = deviceId.trim();
+        if (deviceId.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Device ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < deviceId.length(); i++) {
+            char c = deviceId.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Device ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         //  Find the device and its index in the list
         int foundIndex = -1;
@@ -1173,7 +1271,22 @@ private void handleStaffLogin() {
             return;
         }
         deviceId = deviceId.trim();
-
+        if (deviceId.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Device ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < deviceId.length(); i++) {
+            char c = deviceId.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Device ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         //  Search for the device in the list
         Device foundDevice = null;
         for (int i = 0; i < deviceList.size(); i++) {
@@ -1282,6 +1395,11 @@ private void handleStaffLogin() {
 
     }//GEN-LAST:event_loginHistorySDBtnActionPerformed
 
+    private void returnBDBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnBDBtnActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_returnBDBtnActionPerformed
+
     // This method runs when the "Return Device" button is clicked on the Borrower Dashboard
     private void handleReturnDevice() {
 
@@ -1297,6 +1415,22 @@ private void handleStaffLogin() {
             return; // user clicked Cancel
         }
         deviceId = deviceId.trim();
+        if (deviceId.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Device ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < deviceId.length(); i++) {
+            char c = deviceId.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Device ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         //  Search the loan queue for a matching loan (same device + same borrower)
         Loan foundLoan = null;
@@ -1382,6 +1516,22 @@ private void handleStaffLogin() {
             return;  // user cancelled
         }
         selectedDevice = selectedDevice.trim();
+         if (selectedDevice.length() != 4) {
+            JOptionPane.showMessageDialog(this, "Device ID must be exactly 4 characters.", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        boolean idValid = true;
+        for (int i = 0; i < selectedDevice.length(); i++) {
+            char c = selectedDevice.charAt(i);
+            if (!Character.isLetterOrDigit(c)) {
+                idValid = false;
+                break;
+            }
+        }
+        if (!idValid) {
+            JOptionPane.showMessageDialog(this, "Device ID must be alphanumeric (letters and numbers only).", "Validation", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         //  Search for the device in our SingleLinkedList
         // We loop through the list and compare each device's ID

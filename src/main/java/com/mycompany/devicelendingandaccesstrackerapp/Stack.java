@@ -6,7 +6,7 @@ package com.mycompany.devicelendingandaccesstrackerapp;
 
 /**
  *
- * @author dhruv
+ * @author dhruva
  */
 public class Stack implements StackInterface {
 
